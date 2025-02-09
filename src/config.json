@@ -1,0 +1,15 @@
+{
+    "logger": {
+        "verbosity": "Debug",
+    },
+    "oled": {
+       "i2c_scl_pin": 8,
+       "i2c_sda_pin": 9,
+       "frequency": 400000,
+       "height_pxls": 64,
+       "width_pxls": 48
+    },
+    "ui": {
+        "animation_fps": 12
+    }
+}
