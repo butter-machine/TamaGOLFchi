@@ -1,11 +1,24 @@
 import time
+import io
 
 import oled.text_writer as text_writer
-import oled.fonts.freesans20 as freesans20
+import oled.fonts.byte_bounce_14 as font
 
 
 class OledAnimator:
-    """Oled animation player."""
+    """
+    Oled animation player.
+    
+    How to play animation:
+    animator = OledAnimator(oled, 24)
+    with open(animation_path, "rb") as file:
+        animator.clear()	# Make sure to clear screen before showing animation.
+        frame = ""	# Initial non-None value.
+        while frame is not None:
+            frame = animator.get_frame_data_from_file(file)
+            animator.update_animation(frame)
+    """
+    
     INFO_FRAME_MARGIN = 3
 
     def __init__(self, oled: Oled, animation_fps: int):
@@ -28,17 +41,21 @@ class OledAnimator:
         """Switch to bright mode."""
         self.oled.bright_mode()
         
-    def display_animation(self, animation_path: str):
-        """Play animation from .bin file."""
-        with open(animation_path, 'rb') as f:
-            while True:
-                frame_data = f.read(self.oled.width * self.oled.height // 8)
-                if len(frame_data) == 0:
-                    break
-                self.oled.display_frame(frame_data, self.oled.width, self.oled.height)
-                time.sleep(1 / self.animation_fps)
+    def clear(self):
+        """Clear screen."""
+        self.oled.clear()
+        
+    def get_frame_data_from_file(self, file: io.BufferedReader):
+        """Get next frame from opened file"""
+        return file.read(self.oled.width * self.oled.height // 8)
+    
+    def update_animation(self, frame_data: str):
+        """Show frame of animation."""
+        self.oled.display_frame(frame_data, self.oled.width, self.oled.height)
+        time.sleep(1 / self.animation_fps)	# TODO
 
     def display_info(self, data: str):
+        """Display provided data on the screen."""
         self.oled.screen.rect(
             self.INFO_FRAME_MARGIN,	# X-coordinate of the top-left corner.
             self.INFO_FRAME_MARGIN,	# Y-coordinate of the top-left corner.
@@ -46,7 +63,6 @@ class OledAnimator:
             self.oled.height - 2 * self.INFO_FRAME_MARGIN,	# Height of the rectangle.
             self.complementary_color,
         )
-        font_writer = text_writer.Writer(self.oled.screen, freesans20)
-        font_writer.set_textpos(14, 25)
-        font_writer.printstring("79")
+        font_writer = text_writer.Writer(self.oled.screen, font)
+        font_writer.print_centered_string(data)
         self.oled.screen.show()

@@ -23,6 +23,11 @@ class Oled:
         """Switch to dark mode - backlight is on."""
         self.screen.invert(1)
         
+    def clear(self):
+        """Clear display."""
+        self.screen.fill(0)
+        self.screen.show()
+        
     def display_frame(
         self,
         frame_data: bytearray,

@@ -1,6 +1,13 @@
+"""
+Print text from font.
+
+Based on https://github.com/peterhinch/micropython-font-to-py/tree/master
+"""
 import framebuf
 
 class Writer():
+    """A class to write a font."""
+    
     text_row = 0        # attributes common to all Writer instances
     text_col = 0
     row_clip = False    # Clip or scroll when screen full
@@ -81,3 +88,45 @@ class Writer():
         else:
             _, _, char_width = self.font.get_ch(char)
         return char_width
+    
+    def get_text_dimensions(self, string):
+        """Calculate total width and height of the text to center it."""
+        width = 0
+        height = 0
+        lines = string.split("\n")
+        max_line_height = 0  # Track the maximum height of any line
+
+        # Calculate total width (longest line) and total height (sum of line heights)
+        for line in lines:
+            line_width = 0
+            for char in line:
+                _, char_height, char_width = self.font.get_ch(char)
+                line_width += char_width
+                if char_height > max_line_height:
+                    max_line_height = char_height
+            width = max(width, line_width)  # The longest line determines the width
+            height += max_line_height  # Sum the height of all lines
+        return width, height, max_line_height
+
+    def center_text(self, string):
+        """Calculate position to center the text, handling multiple lines."""
+        lines = string.split("\n")
+        width, total_height, max_line_height = self.get_text_dimensions(string)
+
+        # Center horizontally
+        x_pos = (self.screenwidth - width) // 2
+
+        # Center vertically, distributing space evenly for all lines
+        y_pos = (self.screenheight - total_height) // 2
+
+        return x_pos, y_pos, max_line_height, len(lines)
+
+    def print_centered_string(self, string):
+        """Print the string centered on the screen, with correct spacing for multiple lines."""
+        x_pos, y_pos, max_line_height, num_lines = self.center_text(string)
+        lines = string.split("\n")
+
+        # Print each line centered individually
+        for i, line in enumerate(lines):
+            self.set_textpos(x_pos, y_pos + (max_line_height * i))
+            self.printstring(line)
