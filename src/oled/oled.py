@@ -1,5 +1,6 @@
 from machine import Pin, SoftI2C
 import ssd1306
+import framebuf
 
 
 class Oled:
@@ -31,21 +32,11 @@ class Oled:
     def display_frame(
         self,
         frame_data: bytearray,
-        frame_width: int,
-        frame_height: int,
         x_offset: int = 0,
         y_offset: int = 0,
     ):
-        """Display a single frame on the OLED screen, centered."""
-        self.screen.fill(0)  # Clear the screen
-
-        byte_index = 0
-        for y in range(frame_height):
-            for x in range(frame_width):
-                byte_value = frame_data[byte_index]
-                pixel = (byte_value >> (7 - (x % 8))) & 1  # Extract bit for pixel
-                if pixel:
-                    self.screen.pixel(x + x_offset, y + y_offset, 1)
-                if (x + 1) % 8 == 0:
-                    byte_index += 1
+        """Display a single frame on the OLED screen."""
+        self.screen.fill(0)
+        fb = framebuf.FrameBuffer(frame_data, self.width, self.height, framebuf.MONO_HLSB)
+        self.screen.blit(fb, x_offset, y_offset)
         self.screen.show()

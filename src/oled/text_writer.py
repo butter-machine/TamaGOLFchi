@@ -121,12 +121,12 @@ class Writer():
 
         return x_pos, y_pos, max_line_height, len(lines)
 
-    def print_centered_string(self, string):
+    def print_centered_string(self, string, y_offset=0):
         """Print the string centered on the screen, with correct spacing for multiple lines."""
         x_pos, y_pos, max_line_height, num_lines = self.center_text(string)
         lines = string.split("\n")
 
         # Print each line centered individually
         for i, line in enumerate(lines):
-            self.set_textpos(x_pos, y_pos + (max_line_height * i))
+            self.set_textpos(x_pos, y_pos + (max_line_height * i) + y_offset)
             self.printstring(line)
