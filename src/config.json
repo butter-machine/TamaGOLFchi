@@ -10,7 +10,7 @@
        "width_pxls": 48
     },
     "ui": {
-        "animation_fps": 12
+        "animation_ticks": 100000
     },
     "control": {
         "mode_button_pin": 7,

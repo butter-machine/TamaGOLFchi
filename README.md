@@ -1,16 +1,16 @@
-## How to convert .gif image to animation
-1. Convert .gif animation to .pbm P6 format (using [Pixlion Image Converter](https://www.nchsoftware.com/imageconverter/index.html?srsltid=AfmBOopAlCtXWQG9R3IjHTWoFd3L525Q6CH4Wy8IV0WzcV5I9QOWD1Hz), for example).
-2. Each gif must be converted as a series of .pbm files named in alpabetical order, for example, first frame - 00.pbm, second - 01.pbm, etc. Place all converted files under the same folder, for example, if we need to convert two gifs - anim1.gif and anim2.gif, the layout must be the following:
-- input_folder
-    - anim1
-        - 00.pbm
-        - 01.pbm
-        - xx.pbm
-    - anim2
-        - 00.pbm
-        - 01.pbm
-        - xx.pbm
-3. Run `python tools/bitmap_converter.py` input path to `input_folder` and path to the output folder - as a result the script will generate two files - anim1.bin and anim2.bin that can be used as animations.
+## How to convert .gif image to animation (on PC).
+1. Install PIL `pip install pillow`.
+2. Run `python3 bitmap_converter` <path to dir>`.
+
+- Supports .png, .jpg, .jpeg, and .gif formats.
+- Images are automatically converted to monochrome, but they must already contain only black and white pixels.
+- Images must not have any alpha-channel variations (i.e., no transparency).
+- The input argument is a directory path. The script processes all images in the specified directory with supported
+formats and saves the converted files in the same location with a .bin extension.
+- For .gif files, the script creates a new directory with the same name as the original .gif. Each frame is saved as a
+separate .bin file, named sequentially as 0000.bin, 0001.bin, 0002.bin, etc.
+
+3. Upload animations to ESP32's `/src/animation` and pictures to `/src/ico`.
 
 
 ## How to upload the project to ESP32
